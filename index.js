@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
@@ -44,6 +45,15 @@ async function run() {
   //     const result = await cursor.toArray();
   //     res.send(result);
   // });
+  // jwt related API
+  // app.post('/jwt', async(req,res)=>{
+  //   const user = req.body;
+  //   const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{
+  //     expiresIn:'1hr'});
+  //     res.send({ token });
+  // })
+// ACCESS_TOKEN_SECRET=15f485a6a00b73dc30e1b0fa44402b915a97dc766bd1b188bea27274335f4d1d8d8fada936f5b61e3aed6344c5047742258135a92ce1638838b6da58cf7565d4
+
   // User API 
     app.get('/users',async (req,res)=>{
       const result = await  UsersCollection.find().toArray();
