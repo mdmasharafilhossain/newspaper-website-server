@@ -48,7 +48,24 @@ async function run() {
     app.get('/users',async (req,res)=>{
       const result = await  UsersCollection.find().toArray();
       res.send(result);
-    }) 
+    });
+
+    // Admin Fucntionality 
+    app.patch('/user/admin/:id', async (req,res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const UpdatedDoc = {
+        $set :{
+          role: 'admin'
+        }
+      }
+      const result = await UsersCollection.updateOne(filter,UpdatedDoc);
+      res.send(result);
+    } ) 
+
+
+
+
     app.post('/users', async(req,res)=>{
       const user = req.body;
       // cheaking user 
