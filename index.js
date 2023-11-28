@@ -45,7 +45,10 @@ async function run() {
   //     res.send(result);
   // });
   // User API 
-
+    app.get('/users',async (req,res)=>{
+      const result = await  UsersCollection.find().toArray();
+      res.send(result);
+    }) 
     app.post('/users', async(req,res)=>{
       const user = req.body;
       // cheaking user 
