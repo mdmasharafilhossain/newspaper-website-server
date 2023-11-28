@@ -33,11 +33,50 @@ async function run() {
     // await client.db("admin").command({ ping: 1 });
 
     const ArticleCollection = client.db('newspaper').collection('articles');
+    const UsersCollection = client.db('newspaper').collection('users');
+   
+  //   app.get('/article', async(req,res)=>{
+  //     // const filter = req.query;
+  //     // const query = {
+  //     //     title:{$regex:filter.search, $options:'i'}
+  //     // }
+  //     const cursor = ArticleCollection.find();
+  //     const result = await cursor.toArray();
+  //     res.send(result);
+  // });
+  // User API 
+
+    app.post('/users', async(req,res)=>{
+      const user = req.body;
+      // cheaking user 
+      const query = {email:user.email}
+      const ExistingUser = await UsersCollection.findOne(query);
+      if(ExistingUser){
+        return res.send({message: 'user Already Exists',insertedId: null})
+      }
+      const result = await UsersCollection.insertOne(user);
+      res.send(result);
+    })
+
+
     app.get('/article', async(req,res)=>{
-        const cursor = ArticleCollection.find();
+        const filter = req.query;
+        const searchQuery = filter.search && typeof filter.search === 'string' ? filter.search : '';
+        const query = {
+            title:{$regex:searchQuery, $options:'i'}
+        }
+        const cursor = ArticleCollection.find(query);
         const result = await cursor.toArray();
         res.send(result);
     });
+    // app.get('/article/:id',async(req,res)=>{
+    //   const id =req.params.id;
+    //   const query = {_id : new ObjectId(id)}
+    //   const result = await ArticleCollection.findOne(query);
+    //   res.send(result);
+      
+    // });
+    
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
