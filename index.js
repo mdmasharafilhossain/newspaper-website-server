@@ -35,6 +35,7 @@ async function run() {
 
     const ArticleCollection = client.db('newspaper').collection('articles');
     const UsersCollection = client.db('newspaper').collection('users');
+    const PremiumArticleCollection = client.db('newspaper').collection('PremiumArticle');
    
   //   app.get('/article', async(req,res)=>{
   //     // const filter = req.query;
