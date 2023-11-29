@@ -54,6 +54,19 @@ async function run() {
   //     res.send({ token });
   // })
 // ACCESS_TOKEN_SECRET=15f485a6a00b73dc30e1b0fa44402b915a97dc766bd1b188bea27274335f4d1d8d8fada936f5b61e3aed6344c5047742258135a92ce1638838b6da58cf7565d4
+  // Premium Article Collection
+  app.post('/premiumArticle', async(req,res)=>{
+    const article = req.body;
+    
+    
+    const result = await PremiumArticleCollection.insertOne(article);
+    res.send(result);
+  })
+
+  app.get('/premiumArticle',async (req,res)=>{
+    const result = await  PremiumArticleCollection.find().toArray();
+    res.send(result);
+  });
 
   // User API 
     app.get('/users',async (req,res)=>{
