@@ -57,8 +57,11 @@ async function run() {
   // Premium Article Collection
   app.post('/premiumArticle', async(req,res)=>{
     const article = req.body;
-    
-    
+    const query = {title:article.title}
+    const ExistingUser = await PremiumArticleCollection.findOne(query);
+    if(ExistingUser){
+      return res.send({message: 'Article Already Exists',insertedId: null})
+    }
     const result = await PremiumArticleCollection.insertOne(article);
     res.send(result);
   })
