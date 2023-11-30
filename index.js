@@ -118,6 +118,8 @@ async function run() {
       res.send(result);
     })
 
+    //  Article Part 
+   
 
     app.get('/article', async(req,res)=>{
         const filter = req.query;
@@ -129,6 +131,17 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
     });
+    app.get('/article/premium', async(req,res)=>{
+      const query = req.query;
+      const page = query.page; 
+      const pageNumber = parseInt(page);
+      const perPage = 3;
+      const skip = pageNumber * perPage;
+      const articles = await  ArticleCollection.find().skip(skip).limit(perPage)
+      const result = await articles.toArray();
+      res.send(result);
+      
+  });
     // app.get('/article/:id',async(req,res)=>{
     //   const id =req.params.id;
     //   const query = {_id : new ObjectId(id)}
