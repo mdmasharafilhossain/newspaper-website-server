@@ -72,9 +72,24 @@ async function run() {
   });
 
   // User API 
-    app.get('/users',async (req,res)=>{
-      const result = await  UsersCollection.find().toArray();
-      res.send(result);
+    
+
+      
+      app.get('/users', async (req,res)=>{
+        const result = await  UsersCollection.find().toArray();
+        res.send(result);
+      })
+      app.get('/users/pagination',async (req,res)=>{
+        const query = req.query;
+        const page = query.page;
+        console.log(page);
+       const pageNumber = parseInt(page);
+        const perPage = 5;
+        const skip = pageNumber * perPage ;
+        const users = UsersCollection.find().skip(skip).limit(perPage);
+      const result = await  users.toArray();
+      const UsersCount = await   UsersCollection.countDocuments();
+      res.send({result,UsersCount});
     });
 
     // cheak Admin 
@@ -131,17 +146,36 @@ async function run() {
         const result = await cursor.toArray();
         res.send(result);
     });
+    // Add Article
+    app.post('/article',async (req,res)=>{
+      const item = req.body;
+      const result = await ArticleCollection.insertOne(item);
+      res.send(result);
+    })
+
+
     app.get('/article/premium', async(req,res)=>{
       const query = req.query;
       const page = query.page; 
+      console.log(page);
       const pageNumber = parseInt(page);
       const perPage = 3;
-      const skip = pageNumber * perPage;
-      const articles = await  ArticleCollection.find().skip(skip).limit(perPage)
+      
+      const skip = pageNumber * perPage ;
+      const articles =  ArticleCollection.find().skip(skip).limit(perPage);
       const result = await articles.toArray();
-      res.send(result);
+      const ArticleCount = await   ArticleCollection.countDocuments();
+      console.log(ArticleCount);
+      res.send({result,ArticleCount});
       
   });
+
+  app.delete('/article/premium/:id', async(req,res)=>{
+     const id = req.params.id;
+     const query = {_id: new ObjectId(id)}
+     const result = await ArticleCollection.deleteOne(query);
+     res.send(result);
+  })
     // app.get('/article/:id',async(req,res)=>{
     //   const id =req.params.id;
     //   const query = {_id : new ObjectId(id)}
