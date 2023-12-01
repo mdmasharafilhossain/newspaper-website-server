@@ -4,7 +4,8 @@ const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
-require('dotenv').config()
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KET);
 const port = process.env.PORT || 5000;
 
 // middleware 
@@ -53,7 +54,7 @@ async function run() {
   //     expiresIn:'1hr'});
   //     res.send({ token });
   // })
-// ACCESS_TOKEN_SECRET=15f485a6a00b73dc30e1b0fa44402b915a97dc766bd1b188bea27274335f4d1d8d8fada936f5b61e3aed6344c5047742258135a92ce1638838b6da58cf7565d4
+// 
   // Premium Article Collection
   app.post('/premiumArticle', async(req,res)=>{
     const article = req.body;
@@ -180,13 +181,21 @@ async function run() {
      const result = await ArticleCollection.deleteOne(query);
      res.send(result);
   })
-    // app.get('/article/:id',async(req,res)=>{
-    //   const id =req.params.id;
-    //   const query = {_id : new ObjectId(id)}
-    //   const result = await ArticleCollection.findOne(query);
-    //   res.send(result);
-      
-    // });
+   
+  // Payment Method 
+   app.post('/create-payment-intent', async (req,res)=>{
+    const { price } = req.body;
+    const amount = parseInt(price * 100);
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: 'usd',
+      payment_method_types: ['card']
+    });
+    res.send({
+      clientSecret: paymentIntent.client_secret
+    })
+   })
     
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
