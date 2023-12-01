@@ -135,6 +135,10 @@ async function run() {
 
     //  Article Part 
    
+    app.get('/article', async (req,res)=>{
+      const result = await  ArticleCollection.find().toArray();
+      res.send(result);
+    })
 
     app.get('/article', async(req,res)=>{
         const filter = req.query;
