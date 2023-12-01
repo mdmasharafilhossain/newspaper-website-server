@@ -37,6 +37,7 @@ async function run() {
     const ArticleCollection = client.db('newspaper').collection('articles');
     const UsersCollection = client.db('newspaper').collection('users');
     const PremiumArticleCollection = client.db('newspaper').collection('PremiumArticle');
+    const PublisherCollection = client.db('newspaper').collection('publisher');
    
   //   app.get('/article', async(req,res)=>{
   //     // const filter = req.query;
@@ -54,7 +55,26 @@ async function run() {
   //     expiresIn:'1hr'});
   //     res.send({ token });
   // })
-// 
+// publisher Collection
+
+app.post('/publisher', async(req,res)=>{
+  const publisher = req.body;
+  const query = {name:publisher.name}
+      const ExistingUser = await PublisherCollection.findOne(query);
+      if(ExistingUser){
+        return res.send({message: 'Publisher Already Exists',insertedId: null})
+      }
+  const result = await PublisherCollection.insertOne(publisher);
+  res.send(result);
+})
+
+
+    app.get('/publisher',async(req,res)=>{
+      const result = await  PublisherCollection.find().toArray();
+    res.send(result);
+    })
+
+
   // Premium Article Collection
   app.post('/premiumArticle', async(req,res)=>{
     const article = req.body;
@@ -94,6 +114,31 @@ async function run() {
     });
 
     // cheak Admin 
+    
+    app.get('/users/profile/:email',async (req,res)=>{
+      const email = req.params.email;
+  
+  const result = await UsersCollection.find({email}).toArray();
+  res.send(result)
+    })
+    app.put('/users/profile/:email',async(req,res)=>{
+      const email = req.params.email;
+      const filter = {email:email}
+      const options = {upsert:true}
+      const updatedProduct = req.body;
+
+      const Product = {
+        $set: {
+          name:updatedProduct.name,
+          photo:updatedProduct.photo,
+          
+        }
+      }
+
+      const result = await UsersCollection.updateOne(filter,Product,options);
+      res.send(result);
+    })
+
 
     app.get('/users/admin/:email',async (req,res)=>{
       const email = req.params.email;
@@ -107,6 +152,19 @@ async function run() {
     })
 
     // Admin Fucntionality 
+
+    app.patch('/users/person/:id', async (req,res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const UpdatedDoc = {
+        $set :{
+          premium: 'premium'
+        }
+      }
+      const result = await UsersCollection.updateOne(filter,UpdatedDoc);
+      res.send(result);
+    } ) 
+
     app.patch('/users/admin/:id', async (req,res)=>{
       const id = req.params.id;
       const filter = {_id: new ObjectId(id)};
@@ -136,10 +194,10 @@ async function run() {
 
     //  Article Part 
    
-    app.get('/article', async (req,res)=>{
-      const result = await  ArticleCollection.find().toArray();
-      res.send(result);
-    })
+    // app.get('/article', async (req,res)=>{
+    //   const result = await  ArticleCollection.find().toArray();
+    //   res.send(result);
+    // })
 
     app.get('/article', async(req,res)=>{
         const filter = req.query;
@@ -180,6 +238,35 @@ async function run() {
      const query = {_id: new ObjectId(id)}
      const result = await ArticleCollection.deleteOne(query);
      res.send(result);
+  });
+
+  app.get('/article/add/:email',async (req,res)=>{
+    const email = req.params.email;
+    const result = await ArticleCollection.find({email}).toArray();
+    res.send(result)
+  });
+  app.delete('/article/add/:id',async(req,res)=>{
+    const id = req.params.id;
+     const query = {_id: new ObjectId(id)}
+     const result = await ArticleCollection.deleteOne(query);
+     res.send(result);
+  });
+  app.put('/article/add/:id',async(req,res)=>{
+    const id = req.params.id;
+      const filter = {_id:id}
+      const options = {upsert:true}
+      const updatedProduct = req.body;
+
+      const Product = {
+        $set: {
+          title:updatedProduct.title,
+          
+          
+        }
+      }
+
+      const result = await ArticleCollection.updateOne(filter,Product,options);
+      res.send(result);
   })
    
   // Payment Method 
