@@ -65,7 +65,7 @@ app.post('/publisher', async(req,res)=>{
         return res.send({message: 'Publisher Already Exists',insertedId: null})
       }
   const result = await PublisherCollection.insertOne(publisher);
-  res.send(result);
+   res.send(result);
 })
 
 
