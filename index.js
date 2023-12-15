@@ -62,7 +62,12 @@ app.get('/feedback',async(req,res)=>{
   const result = await  FeedbackCollection.find().toArray();
 res.send(result);
 })
-
+app.post('/feedback', async(req,res)=>{
+  const feedbacks = req.body;
+  
+  const result = await FeedbackCollection.insertOne(feedbacks);
+   res.send(result);
+});
 
 
 
