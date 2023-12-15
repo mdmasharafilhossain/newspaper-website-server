@@ -38,6 +38,8 @@ async function run() {
     const UsersCollection = client.db('newspaper').collection('users');
     const PremiumArticleCollection = client.db('newspaper').collection('PremiumArticle');
     const PublisherCollection = client.db('newspaper').collection('publisher');
+    const AcceptedCollection = client.db('newspaper').collection('accept');
+    const FeedbackCollection = client.db('newspaper').collection('feedback');
    
   //   app.get('/article', async(req,res)=>{
   //     // const filter = req.query;
@@ -55,6 +57,15 @@ async function run() {
   //     expiresIn:'1hr'});
   //     res.send({ token });
   // })
+// feedback collection 
+app.get('/feedback',async(req,res)=>{
+  const result = await  FeedbackCollection.find().toArray();
+res.send(result);
+})
+
+
+
+
 // publisher Collection
 
 app.post('/publisher', async(req,res)=>{
@@ -209,10 +220,33 @@ app.post('/publisher', async(req,res)=>{
         const result = await cursor.toArray();
         res.send(result);
     });
+
+    app.patch('/article/:id', async(req,res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const UpdatedDoc = {
+        $set:{
+          status:'accept'
+        }
+
+      }
+      const result = await ArticleCollection.updateOne(filter,UpdatedDoc);
+      res.send(result);
+    })
     // Add Article
     app.post('/article',async (req,res)=>{
       const item = req.body;
       const result = await ArticleCollection.insertOne(item);
+      res.send(result);
+    });
+
+    app.get('/acceptedArticle',async(req,res)=>{
+      const result = await  AcceptedCollection.find().toArray();
+      res.send(result);
+    });
+    app.post('/acceptedArticle',async (req,res)=>{
+      const item = req.body;
+      const result = await AcceptedCollection.insertOne(item);
       res.send(result);
     })
 
