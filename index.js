@@ -206,7 +206,10 @@ app.post('/publisher', async(req,res)=>{
       }
       const result = await UsersCollection.insertOne(user);
       res.send(result);
-    })
+    });
+
+
+    // ------------------Pagination in Admin Dashboard in Route AllUsers----------------
 
     //  Article Part 
    
