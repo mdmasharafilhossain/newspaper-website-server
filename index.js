@@ -249,7 +249,12 @@ app.post('/publisher', async(req,res)=>{
     });
 
     app.get('/acceptedArticle',async(req,res)=>{
-      const result = await  AcceptedCollection.find().toArray();
+      const filter = req.query;
+      console.log(filter);
+      const query = {
+                  title: { $regex: filter.search, $options: 'i'}
+      };
+      const result = await  AcceptedCollection.find(query).toArray();
       res.send(result);
     });
     app.post('/acceptedArticle',async (req,res)=>{
